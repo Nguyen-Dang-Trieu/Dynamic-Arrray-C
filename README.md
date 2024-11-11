@@ -84,5 +84,66 @@ int main() {
 
     return 0;
 }
+~~~
+
+**Example2**:
+~~~c
+#include <stdio.h>
+#include <stdlib.h>
+
+// Hàm cấp phát bộ nhớ cho mảng 2D
+void allocate_2d_array(int ***array, int m, int n) {
+    // Bước 1: Cấp phát bộ nhớ cho các con trỏ `int *`, đại diện cho các hàng
+    //  array[i] = *array = **int
+    *array = (int **)malloc(m * sizeof(int *));
+    if (*array == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    // Bước 2: Cấp phát bộ nhớ cho từng hàng, mỗi hàng có `n` phần tử kiểu `int`
+    for (int i = 0; i < m; i++) {
+        (*array)[i] = (int *)malloc(n * sizeof(int));
+        if ((*array)[i] == NULL) {
+            printf("Memory allocation failed!\n");
+            return;
+        }
+    }
+}
+
+// Hàm giải phóng bộ nhớ của mảng 2D
+void free_2d_array(int **array, int m) {
+    for (int i = 0; i < m; i++) {
+        free(array[i]);  // Giải phóng từng hàng
+    }
+    free(array);  // Giải phóng mảng con trỏ hàng
+}
+
+int main() {
+    int **array;
+    int m = 3, n = 4;
+
+    // Gọi hàm để cấp phát bộ nhớ cho mảng 2D
+    allocate_2d_array(&array, m, n);
+
+    // Kiểm tra nếu cấp phát thành công
+    if (array == NULL) {
+        return 1;
+    }
+
+    // Gán giá trị và in ra mảng
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            array[i][j] = i * n + j;  // Gán giá trị mẫu cho từng phần tử
+            printf("%d ", array[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Giải phóng bộ nhớ
+    free_2d_array(array, m);
+
+    return 0;
+}
 
 ~~~
